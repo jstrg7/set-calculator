@@ -13,19 +13,30 @@ def save_set(set_: tuple) -> str:
     return '' 
 
 
+def erase_system_set(set_names: list[str]) -> None:
+    for set_name in set_names:
+        if len(set_name) == 1 and set_name in SYSTEM_NAMES: set_map.pop(set_name, None)
+
+
 def create_operation(sets: list[str], operand: str = None) -> str:
     result = ()
     if operand == "'": 
         U = None
         if len(sets) > 1 and sets[1] is not None: U = set_map[sets[1]]
         result = scm.get_complement(A=set_map[sets[0]], U=U)
-        return save_set(result)
+        new_name = save_set(result)
+        if new_name == '': return ''
+        erase_system_set([sets[0]]) 
+        return new_name
     if len(sets) != 2: return ''
     if operand == '+': result = scm.get_union(A=set_map[sets[0]], B=set_map[sets[1]])
     elif operand == '-': result = scm.get_intersection(A=set_map[sets[0]], B=set_map[sets[1]])
     elif operand == '/': result = scm.get_difference(A=set_map[sets[0]], B=set_map[sets[1]])
     elif operand == '%': result = scm.get_symmetric_difference(A=set_map[sets[0]], B=set_map[sets[1]])
-    return save_set(result)
+    new_name = save_set(result)
+    if new_name == '': return ''
+    erase_system_set(sets)
+    return new_name
 
 
 def count_all_complements(operation_str: str, U: str) -> str:
@@ -86,3 +97,4 @@ def get_operation(operation_str: str, U: str) -> str:
     if "-" in operation_str: operation_str = count_all_intersections(operation_str)
     if '+' in operation_str or '/' in operation_str or '%' in operation_str: operation_str = count_other_operations(operation_str)
     return operation_str
+
