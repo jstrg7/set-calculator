@@ -1,5 +1,6 @@
 from consts import DEFAULT_UNIVERSAL_SET, SET_POSSIBLE_NAMES, SYSTEM_NAMES
 
+
 def validate_set(set_: tuple) -> tuple:
     result = []
     for element in set_: 
@@ -15,6 +16,34 @@ def validate_brackets(operations_str: str) -> bool:
             if len(stack) == 0: return False 
             del stack[-1]
     return stack == []
+
+
+def is_valid_element(e: str) -> bool:
+    if e == "":
+        return False
+    if len(e) == 1 and (e in SYSTEM_NAMES or e in SET_POSSIBLE_NAMES):
+        return True
+    return all(ch in "0123456789" for ch in e)
+
+
+def validate_set_input(name: str, elements: str) -> tuple[bool, str, tuple]:
+    if name not in SET_POSSIBLE_NAMES: 
+        return (False, 
+                'As name you can use only A-Z letters.', 
+                ())
+    result = []
+    for raw in elements.split(","):
+        element = raw.strip()
+        if element == "":
+            return (False,
+                    'Empty element - check for double commas or trailing comma.',
+                    ())
+        if not is_valid_element(element):
+            return (False,
+                    'As elements you can use only A-Z, a-z or numbers.',
+                    ())
+        result.append(element)
+    return (True, "", tuple(result))
 
 
 def validate_operators(operations_str: str) -> bool:
@@ -71,3 +100,20 @@ def operations_is_valid(operation_str: str) -> bool:
             and validate_brackets(operation_str)
             and validate_operators(operation_str)
             and validate_letters(operation_str))
+
+
+def validate_expression_output(expression: str = '', to_latex: bool = False, to_system_format = False) -> str:
+    expression = expression.replace(" ", '')
+    if to_latex:
+        expression = expression.replace('+', r" \cup ")
+        expression = expression.replace('-', r" \cap ")
+        expression = expression.replace("/", r" \setminus ")
+        expression = expression.replace("%", r" \triangle ")
+        expression = expression.replace("'", r' ^c ')
+    elif to_system_format:
+        expression = expression.replace(r"\cup", '+')
+        expression = expression.replace(r"\cap", '-')
+        expression = expression.replace(r"\setminus", '/')
+        expression = expression.replace(r"\triangle", "%")
+        expression = expression.replace(r'^c', "'")
+    return expression
