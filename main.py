@@ -1,7 +1,7 @@
 import streamlit as st
-import validator_manager as vm
+import core.validator_manager as vm
 from consts import DEFAULT_UNIVERSAL_SET
-import operations_parser as op
+import core.operations_parser as op
 
 
 if "sets" not in st.session_state:

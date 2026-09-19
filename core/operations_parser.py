@@ -1,4 +1,4 @@
-import set_calculation_manager as scm
+import core.set_calculation_manager as scm
 from consts import DEFAULT_UNIVERSAL_SET, SYSTEM_NAMES
 
 
