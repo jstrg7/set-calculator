@@ -42,7 +42,7 @@ def validate_set_input(name: str, elements: str) -> tuple[bool, str, tuple]:
             return (False,
                     'As elements you can use only A-Z, a-z or numbers.',
                     ())
-        result.append(element)
+        if element not in result: result.append(element)
     return (True, "", tuple(result))
 
 
